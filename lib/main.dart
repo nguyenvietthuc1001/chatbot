@@ -279,7 +279,7 @@ class _CareerChatPageState extends State<CareerChatPage> {
         flexibleSpace: const DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF7467E8), Color(0xFFAA7EE9), Color(0xFFFF9AA2)],
+              colors: [Color(0xFF4338A8), Color(0xFF6550C8), Color(0xFF9B3F75)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -319,20 +319,39 @@ class _CareerChatPageState extends State<CareerChatPage> {
           ],
         ),
         actions: [
-          IconButton(
-            tooltip: isDark ? 'Chuyển sang nền sáng' : 'Chuyển sang nền tối',
-            onPressed: widget.onToggleTheme,
-            icon: Icon(
-              isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-              color: Colors.white,
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0x29FFFFFF),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0x47FFFFFF)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: isDark
+                        ? 'Chuy\u1ec3n sang n\u1ec1n s\u00e1ng'
+                        : 'Chuy\u1ec3n sang n\u1ec1n t\u1ed1i',
+                    onPressed: widget.onToggleTheme,
+                    icon: Icon(
+                      isDark
+                          ? Icons.light_mode_rounded
+                          : Icons.dark_mode_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: '\u0110\u0103ng xu\u1ea5t',
+                    onPressed: () async {
+                      await Supabase.instance.client.auth.signOut();
+                    },
+                    icon: const Icon(Icons.logout_rounded, color: Colors.white),
+                  ),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            tooltip: '\u0110\u0103ng xu\u1ea5t',
-            onPressed: () async {
-              await Supabase.instance.client.auth.signOut();
-            },
-            icon: const Icon(Icons.logout_rounded, color: Colors.white),
           ),
         ],
       ),
@@ -678,6 +697,10 @@ class _MessageComposer extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: controller,
+                  style: const TextStyle(
+                    color: Color(0xFF342C48),
+                    fontWeight: FontWeight.w500,
+                  ),
                   enabled: !isLoading,
                   minLines: 1,
                   maxLines: 4,
@@ -688,10 +711,10 @@ class _MessageComposer extends StatelessWidget {
                   },
                   decoration: InputDecoration(
                     hintText: 'Kể mình nghe về điều bạn yêu thích...',
-                    hintStyle: const TextStyle(color: Color(0xFF9B91AA)),
+                    hintStyle: const TextStyle(color: Color(0xFF71677F)),
                     prefixIcon: const Icon(
                       Icons.chat_bubble_rounded,
-                      color: Color(0xFF9B78D0),
+                      color: Color(0xFF7453A8),
                       size: 20,
                     ),
                     filled: true,
