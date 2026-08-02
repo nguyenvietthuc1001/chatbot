@@ -2,8 +2,24 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() => runApp(const MyApp());
+import 'auth_gate.dart';
+
+abstract final class SupabaseConfig {
+  static const url = 'https://muygnhhqxsdsmfjrhsag.supabase.co';
+  static const publishableKey =
+      'sb_publishable_xmRxYByGyXdFUUUJcVxlzg_FCeG2eQn';
+}
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    publishableKey: SupabaseConfig.publishableKey,
+  );
+  runApp(const MyApp());
+}
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -46,7 +62,12 @@ class _MyAppState extends State<MyApp> {
       theme: _theme(Brightness.light),
       darkTheme: _theme(Brightness.dark),
       themeMode: _themeMode,
-      home: CareerChatPage(isDark: isDark, onToggleTheme: _toggleTheme),
+      home: AuthGate(
+        isDark: isDark,
+        onToggleTheme: _toggleTheme,
+        authenticatedBuilder: (_) =>
+            CareerChatPage(isDark: isDark, onToggleTheme: _toggleTheme),
+      ),
     );
   }
 }
@@ -84,11 +105,22 @@ class GeminiCareerService {
         )
         .toList();
 
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session == null) {
+      throw const GeminiException(
+        'Phi\u00ean \u0111\u0103ng nh\u1eadp \u0111\u00e3 h\u1ebft h\u1ea1n. H\u00e3y \u0111\u0103ng nh\u1eadp l\u1ea1i.',
+      );
+    }
+
     try {
       final response = await _client
           .post(
             Uri.parse(_endpoint),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': SupabaseConfig.publishableKey,
+              'Authorization': 'Bearer ${session.accessToken}',
+            },
             body: jsonEncode({'messages': messagesForApi}),
           )
           .timeout(const Duration(seconds: 30));
@@ -294,6 +326,13 @@ class _CareerChatPageState extends State<CareerChatPage> {
               isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
               color: Colors.white,
             ),
+          ),
+          IconButton(
+            tooltip: '\u0110\u0103ng xu\u1ea5t',
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+            },
+            icon: const Icon(Icons.logout_rounded, color: Colors.white),
           ),
         ],
       ),
