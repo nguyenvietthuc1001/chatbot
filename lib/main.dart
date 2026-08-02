@@ -45,82 +45,55 @@ class GeminiCareerService {
     : _client = client ?? http.Client();
 
   final http.Client _client;
+  static const _endpoint =
+      'https://muygnhhqxsdsmfjrhsag.supabase.co/functions/v1/gemini-chat';
 
-  static const _apiKey = String.fromEnvironment('GEMINI_API_KEY');
-  static const _model = String.fromEnvironment(
-    'GEMINI_MODEL',
-    defaultValue: 'gemini-3.1-flash-lite',
-  );
   Future<String> getAdvice(List<ChatMessage> messages) async {
-    if (_apiKey.isEmpty) {
-      throw const GeminiException(
-        'Ch\u01b0a c\u1ea5u h\u00ecnh Gemini API key. Ch\u1ea1y app v\u1edbi --dart-define=GEMINI_API_KEY=your_key.',
-      );
-    }
-
-    final contents = messages
+    final messagesForApi = messages
         .where((message) => message.includeInHistory)
         .map(
           (message) => {
             'role': message.sender == Sender.user ? 'user' : 'model',
-            'parts': [
-              {'text': message.text},
-            ],
+            'text': message.text,
           },
         )
         .toList();
 
-    final response = await _client
-        .post(
-          Uri.parse(
-            'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent',
-          ),
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': _apiKey,
-          },
-          body: jsonEncode({
-            'systemInstruction': {
-              'parts': [
-                {
-                  'text':
-                      'B\u1ea1n l\u00e0 t\u01b0 v\u1ea5n vi\u00ean h\u01b0\u1edbng nghi\u1ec7p cho h\u1ecdc sinh, sinh vi\u00ean t\u1ea1i Vi\u1ec7t Nam. Lu\u00f4n tr\u1ea3 l\u1eddi b\u1eb1ng ti\u1ebfng Vi\u1ec7t, th\u00e2n thi\u1ec7n v\u00e0 th\u1ef1c t\u1ebf.\n\nTr\u01b0\u1edbc khi \u0111\u01b0a ra k\u1ebft lu\u1eadn ho\u1eb7c g\u1ee3i \u00fd ng\u00e0nh, h\u00e3y h\u1ecfi ng\u01b0\u1ee3c \u0111\u1ec3 hi\u1ec3u \u00edt nh\u1ea5t c\u00e1c th\u00f4ng tin c\u00f2n thi\u1ebfu v\u1ec1: s\u1edf th\u00edch, m\u00f4n h\u1ecdc th\u1ebf m\u1ea1nh v\u00e0 t\u00ednh c\u00e1ch/phong c\u00e1ch l\u00e0m vi\u1ec7c. M\u1ed7i l\u01b0\u1ee3t ch\u1ec9 n\u00ean h\u1ecfi 1\u20133 c\u00e2u r\u00f5 r\u00e0ng, kh\u00f4ng l\u1eb7p l\u1ea1i \u0111i\u1ec1u ng\u01b0\u1eddi h\u1ecdc \u0111\u00e3 n\u00f3i.\n\nKhi \u0111\u00e3 \u0111\u1ee7 th\u00f4ng tin, g\u1ee3i \u00fd \u0111\u00fang 2\u20133 ng\u00e0nh h\u1ecdc. V\u1edbi t\u1eebng ng\u00e0nh, n\u00eau l\u00fd do ph\u00f9 h\u1ee3p v\u00e0 c\u00e1c kh\u1ed1i x\u00e9t tuy\u1ec3n ph\u1ed5 bi\u1ebfn t\u1ea1i Vi\u1ec7t Nam; nh\u1eafc ng\u01b0\u1eddi h\u1ecdc ki\u1ec3m tra \u0111\u1ec1 \u00e1n tuy\u1ec3n sinh ch\u00ednh th\u1ee9c v\u00ec t\u1ed5 h\u1ee3p c\u00f3 th\u1ec3 thay \u0111\u1ed5i. Kh\u00f4ng kh\u1eb3ng \u0111\u1ecbnh ch\u1eafc ch\u1eafn v\u1ec1 \u0111i\u1ec3m chu\u1ea9n, vi\u1ec7c l\u00e0m ho\u1eb7c kh\u1ea3 n\u0103ng tr\u00fang tuy\u1ec3n.\n\nCh\u1ec9 t\u01b0 v\u1ea5n c\u00e1c n\u1ed9i dung li\u00ean quan \u0111\u1ebfn h\u01b0\u1edbng nghi\u1ec7p, ng\u00e0nh h\u1ecdc, n\u0103ng l\u1ef1c, l\u1ef1a ch\u1ecdn ngh\u1ec1 v\u00e0 l\u1ed9 tr\u00ecnh h\u1ecdc. N\u1ebfu ng\u01b0\u1eddi d\u00f9ng h\u1ecfi ch\u1ee7 \u0111\u1ec1 ngo\u00e0i ph\u1ea1m vi n\u00e0y, h\u00e3y l\u1ecbch s\u1ef1 t\u1eeb ch\u1ed1i ng\u1eafn g\u1ecdn v\u00e0 m\u1eddi h\u1ecd quay l\u1ea1i v\u1edbi m\u1ed9t c\u00e2u h\u1ecfi h\u01b0\u1edbng nghi\u1ec7p.',
-                },
-              ],
-            },
-            'contents': contents,
-            'generationConfig': {'temperature': 0.7, 'maxOutputTokens': 700},
-          }),
-        )
-        .timeout(const Duration(seconds: 30));
+    try {
+      final response = await _client
+          .post(
+            Uri.parse(_endpoint),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'messages': messagesForApi}),
+          )
+          .timeout(const Duration(seconds: 30));
 
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      final error = body['error'] as Map<String, dynamic>?;
-      throw GeminiException(
-        error?['message'] as String? ??
-            'Gemini kh\u00f4ng th\u1ec3 x\u1eed l\u00fd y\u00eau c\u1ea7u n\u00e0y.',
-      );
-    }
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw GeminiException(
+          body['error'] as String? ??
+              'Không thể nhận phản hồi từ trợ lý. Bạn thử lại nhé.',
+        );
+      }
 
-    final candidates = body['candidates'] as List<dynamic>?;
-    if (candidates == null || candidates.isEmpty) {
+      final text = body['text'] as String?;
+      if (text == null || text.trim().isEmpty) {
+        throw const GeminiException(
+          'Mình chưa nhận được phản hồi phù hợp. Bạn thử lại nhé.',
+        );
+      }
+      return text.trim();
+    } on GeminiException {
+      rethrow;
+    } on FormatException {
       throw const GeminiException(
-        'M\u00ecnh ch\u01b0a nh\u1eadn \u0111\u01b0\u1ee3c ph\u1ea3n h\u1ed3i ph\u00f9 h\u1ee3p. B\u1ea1n th\u1eed l\u1ea1i nh\u00e9.',
+        'Phản hồi từ máy chủ không hợp lệ. Bạn thử lại nhé.',
+      );
+    } catch (_) {
+      throw const GeminiException(
+        'Không thể kết nối máy chủ tư vấn. Bạn kiểm tra mạng rồi thử lại nhé.',
       );
     }
-    final content = candidates.first['content'] as Map<String, dynamic>?;
-    final parts = content?['parts'] as List<dynamic>?;
-    final text = parts
-        ?.map((part) => part['text'] as String? ?? '')
-        .join()
-        .trim();
-    if (text == null || text.isEmpty) {
-      throw const GeminiException(
-        'M\u00ecnh ch\u01b0a nh\u1eadn \u0111\u01b0\u1ee3c ph\u1ea3n h\u1ed3i ph\u00f9 h\u1ee3p. B\u1ea1n th\u1eed l\u1ea1i nh\u00e9.',
-      );
-    }
-    return text;
   }
 
   void dispose() => _client.close();
