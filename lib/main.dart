@@ -325,7 +325,7 @@ class _TypingBubble extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
                 SizedBox(width: 10),
-                Text('AI dang suy nghi...'),
+                Text('AI \u0111ang suy ngh\u0129...'),
               ],
             ),
           ),
