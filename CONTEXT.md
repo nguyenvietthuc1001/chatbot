@@ -1,0 +1,17 @@
+# Tu v?n hu?ng nghi?p
+
+��y l� ng? c?nh tr� chuy?n gi�p ngu?i h?c kh�m ph� l?a ch?n ng�nh h?c ph� h?p v?i b?n th�n.
+
+## Language
+
+**Ngu?i h?c**:
+Ngu?i dang t�m hi?u hu?ng h?c v� chia s? m?c ti�u, s? th�ch ho?c nang l?c trong cu?c tr� chuy?n.
+_Avoid_: Kh�ch h�ng, user
+
+**Tr? l� hu?ng nghi?p**:
+Tr? l� AI g?i m? c�c ng�nh h?c v� c�u h?i kh�m ph� cho ngu?i h?c; d�y kh�ng ph?i l� ngu?i quy?t d?nh thay h?.
+_Avoid_: Chuy�n gia tuy?n sinh, bot
+
+**G?i � ng�nh h?c**:
+Khuy?n ngh? c� l� do v? m?t ho?c nhi?u ng�nh h?c, d?a tr�n th�ng tin ngu?i h?c chia s?.
+_Avoid_: Ch?n ng�nh ch?t, k?t qu? x�t tuy?n
