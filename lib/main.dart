@@ -204,54 +204,107 @@ class _CareerChatPageState extends State<CareerChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F8F5),
+        toolbarHeight: 78,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        titleSpacing: 20,
+        titleSpacing: 18,
+        flexibleSpace: const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF7467E8), Color(0xFFAA7EE9), Color(0xFFFF9AA2)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         title: const Row(
           children: [
-            CircleAvatar(
-              backgroundColor: Color(0xFFD9EFE3),
-              child: Icon(Icons.auto_awesome_rounded, color: Color(0xFF215A4F)),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: Color(0x33FFFFFF),
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(9),
+                child: Icon(Icons.auto_awesome_rounded, color: Colors.white),
+              ),
             ),
-            SizedBox(width: 10),
+            SizedBox(width: 11),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'H\u01b0\u1edbng nghi\u1ec7p AI',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                  'Hướng nghiệp AI',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 19,
+                    letterSpacing: .2,
+                  ),
                 ),
                 Text(
-                  'Lu\u00f4n s\u1eb5n s\u00e0ng l\u1eafng nghe',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF5D6B65)),
+                  'Cùng khám phá điều bạn giỏi nhất',
+                  style: TextStyle(color: Color(0xFFFDF7FF), fontSize: 12),
                 ),
               ],
             ),
           ],
         ),
       ),
-      body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 18),
-                itemCount: _messages.length + (_isLoading ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == _messages.length) return const _TypingBubble();
-                  return _MessageBubble(message: _messages[index]);
-                },
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF6F2FF), Color(0xFFFFF6EE), Color(0xFFEAF8F3)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(18, 14, 18, 4),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.wb_sunny_rounded,
+                      color: Color(0xFFFFAE42),
+                      size: 19,
+                    ),
+                    SizedBox(width: 7),
+                    Text(
+                      'Mỗi câu trả lời là một gợi ý nhỏ cho hành trình của bạn',
+                      style: TextStyle(
+                        color: Color(0xFF736D88),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            _MessageComposer(
-              controller: _inputController,
-              isLoading: _isLoading,
-              onSend: _sendMessage,
-            ),
-          ],
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 18),
+                  itemCount: _messages.length + (_isLoading ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == _messages.length) return const _TypingBubble();
+                    return _MessageBubble(message: _messages[index]);
+                  },
+                ),
+              ),
+              _MessageComposer(
+                controller: _inputController,
+                isLoading: _isLoading,
+                onSend: _sendMessage,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -265,36 +318,188 @@ class _MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUser = message.sender == Sender.user;
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 340),
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-        decoration: BoxDecoration(
-          color: isUser ? const Color(0xFF215A4F) : Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(18),
-            topRight: const Radius.circular(18),
-            bottomLeft: Radius.circular(isUser ? 18 : 4),
-            bottomRight: Radius.circular(isUser ? 4 : 18),
+    final bubble = Container(
+      constraints: const BoxConstraints(maxWidth: 330),
+      padding: const EdgeInsets.fromLTRB(16, 13, 16, 14),
+      decoration: BoxDecoration(
+        gradient: isUser
+            ? const LinearGradient(
+                colors: [Color(0xFF7566E8), Color(0xFF9B70E6)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : const LinearGradient(
+                colors: [Colors.white, Color(0xFFFFFCFF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(24),
+          topRight: const Radius.circular(24),
+          bottomLeft: Radius.circular(isUser ? 24 : 7),
+          bottomRight: Radius.circular(isUser ? 7 : 24),
+        ),
+        border: Border.all(
+          color: isUser ? const Color(0x337563E8) : const Color(0xFFE9DDF8),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: (isUser ? const Color(0xFF7869E7) : const Color(0xFF8E79AF))
+                .withValues(alpha: .14),
+            blurRadius: 16,
+            offset: const Offset(0, 7),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: .04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+        ],
+      ),
+      child: isUser
+          ? Text(
+              message.text,
+              style: const TextStyle(
+                color: Colors.white,
+                height: 1.45,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            )
+          : _FormattedAssistantText(text: message.text),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!isUser) ...[
+            const _AssistantAvatar(size: 34),
+            const SizedBox(width: 8),
+          ],
+          Flexible(child: bubble),
+        ],
+      ),
+    );
+  }
+}
+
+class _AssistantAvatar extends StatelessWidget {
+  const _AssistantAvatar({this.size = 38});
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [Color(0xFFFFB8C8), Color(0xFFFFD386)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Icon(
+        Icons.auto_awesome_rounded,
+        color: Colors.white,
+        size: size * .55,
+      ),
+    );
+  }
+}
+
+class _FormattedAssistantText extends StatelessWidget {
+  const _FormattedAssistantText({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final lines = text
+        .replaceAll(RegExp(r'[#*]'), '')
+        .replaceAll('\r', '')
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.favorite_rounded, color: Color(0xFFFF8FA6), size: 15),
+            SizedBox(width: 5),
+            Text(
+              'Trợ lý hướng nghiệp',
+              style: TextStyle(
+                color: Color(0xFF8B6AB5),
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ],
         ),
+        const SizedBox(height: 8),
+        for (var index = 0; index < lines.length; index++)
+          _AnswerLine(text: lines[index], isFirst: index == 0),
+      ],
+    );
+  }
+}
+
+class _AnswerLine extends StatelessWidget {
+  const _AnswerLine({required this.text, required this.isFirst});
+  final String text;
+  final bool isFirst;
+
+  @override
+  Widget build(BuildContext context) {
+    final isSuggestion = RegExp(r'^(?:[-•–]|\d+[.)])\s*').hasMatch(text);
+    final cleanText = text.replaceFirst(RegExp(r'^(?:[-•–]|\d+[.)])\s*'), '');
+
+    if (!isSuggestion) {
+      return Padding(
+        padding: EdgeInsets.only(bottom: isFirst ? 9 : 7),
         child: Text(
-          message.text,
+          cleanText,
           style: TextStyle(
-            color: isUser ? Colors.white : const Color(0xFF27332E),
-            height: 1.42,
+            color: const Color(0xFF3D3650),
+            height: 1.48,
             fontSize: 15,
+            fontWeight: isFirst ? FontWeight.w600 : FontWeight.w400,
           ),
         ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 9),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Icon(
+              Icons.stars_rounded,
+              color: Color(0xFFFFAE42),
+              size: 17,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              cleanText,
+              style: const TextStyle(
+                color: Color(0xFF3D3650),
+                height: 1.45,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -305,31 +510,49 @@ class _TypingBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: 12),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(18)),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-                SizedBox(width: 10),
-                Text('AI \u0111ang suy ngh\u0129...'),
-              ],
+    return const Padding(
+      padding: EdgeInsets.only(bottom: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          _AssistantAvatar(),
+          SizedBox(width: 8),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.white, Color(0xFFFFF8FD)],
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(23)),
+              border: Border.fromBorderSide(
+                BorderSide(color: Color(0xFFE9DDF8), width: 1.2),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 17,
+                    height: 17,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: Color(0xFFFF8FA6),
+                    ),
+                  ),
+                  SizedBox(width: 9),
+                  Text(
+                    'AI đang suy nghĩ...',
+                    style: TextStyle(
+                      color: Color(0xFF776D8A),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -350,59 +573,82 @@ class _MessageComposer extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE5E9E5))),
+        color: Color(0xFFFEFCFF),
+        border: Border(top: BorderSide(color: Color(0xFFE7DCF5))),
       ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                enabled: !isLoading,
-                minLines: 1,
-                maxLines: 4,
-                textCapitalization: TextCapitalization.sentences,
-                onSubmitted: (_) {
-                  if (!isLoading) onSend();
-                },
-                decoration: InputDecoration(
-                  hintText: 'Nh\u1eadp c\u00e2u h\u1ecfi c\u1ee7a b\u1ea1n...',
-                  filled: true,
-                  fillColor: const Color(0xFFF4F6F3),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(22),
-                    borderSide: BorderSide.none,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 15),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  enabled: !isLoading,
+                  minLines: 1,
+                  maxLines: 4,
+                  textCapitalization: TextCapitalization.sentences,
+                  onSubmitted: (_) {
+                    if (!isLoading) onSend();
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Kể mình nghe về điều bạn yêu thích...',
+                    hintStyle: const TextStyle(color: Color(0xFF9B91AA)),
+                    prefixIcon: const Icon(
+                      Icons.chat_bubble_rounded,
+                      color: Color(0xFF9B78D0),
+                      size: 20,
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFFF5F0FC),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 13,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      borderSide: const BorderSide(color: Color(0xFFE5D8F5)),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            FilledButton.icon(
-              onPressed: isLoading ? null : onSend,
-              icon: isLoading
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.send_rounded, size: 18),
-              label: const Text('G\u1eedi'),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 15,
+              const SizedBox(width: 9),
+              FilledButton.icon(
+                onPressed: isLoading ? null : onSend,
+                icon: isLoading
+                    ? const SizedBox(
+                        width: 17,
+                        height: 17,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.send_rounded, size: 18),
+                label: const Text('Gửi'),
+                style: FilledButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color(0xFFFF7FA0),
+                  disabledBackgroundColor: const Color(0xFFFFB7C7),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 17,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 3,
+                  shadowColor: const Color(0x66FF7FA0),
                 ),
-                backgroundColor: const Color(0xFF215A4F),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
