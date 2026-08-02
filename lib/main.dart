@@ -5,23 +5,48 @@ import 'package:http/http.dart' as http;
 
 void main() => runApp(const MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'H\u01b0\u1edbng nghi\u1ec7p AI',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF215A4F),
-          brightness: Brightness.light,
-        ),
-        scaffoldBackgroundColor: const Color(0xFFF7F8F5),
-        useMaterial3: true,
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  var _themeMode = ThemeMode.light;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    });
+  }
+
+  ThemeData _theme(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    return ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF7566E8),
+        brightness: brightness,
       ),
-      home: const CareerChatPage(),
+      scaffoldBackgroundColor: isDark
+          ? const Color(0xFF201C35)
+          : const Color(0xFFF7F8F5),
+      useMaterial3: true,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = _themeMode == ThemeMode.dark;
+    return MaterialApp(
+      title: 'Hướng nghiệp AI',
+      debugShowCheckedModeBanner: false,
+      theme: _theme(Brightness.light),
+      darkTheme: _theme(Brightness.dark),
+      themeMode: _themeMode,
+      home: CareerChatPage(isDark: isDark, onToggleTheme: _toggleTheme),
     );
   }
 }
@@ -105,7 +130,14 @@ class GeminiException implements Exception {
 }
 
 class CareerChatPage extends StatefulWidget {
-  const CareerChatPage({super.key});
+  const CareerChatPage({
+    super.key,
+    required this.isDark,
+    required this.onToggleTheme,
+  });
+
+  final bool isDark;
+  final VoidCallback onToggleTheme;
 
   @override
   State<CareerChatPage> createState() => _CareerChatPageState();
@@ -203,6 +235,7 @@ class _CareerChatPageState extends State<CareerChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = widget.isDark;
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -253,11 +286,31 @@ class _CareerChatPageState extends State<CareerChatPage> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            tooltip: isDark ? 'Chuyển sang nền sáng' : 'Chuyển sang nền tối',
+            onPressed: widget.onToggleTheme,
+            icon: Icon(
+              isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
       body: DecoratedBox(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFF6F2FF), Color(0xFFFFF6EE), Color(0xFFEAF8F3)],
+            colors: isDark
+                ? const [
+                    Color(0xFF211C38),
+                    Color(0xFF29234A),
+                    Color(0xFF193D42),
+                  ]
+                : const [
+                    Color(0xFFF6F2FF),
+                    Color(0xFFFFF6EE),
+                    Color(0xFFEAF8F3),
+                  ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -590,6 +643,7 @@ class _MessageComposer extends StatelessWidget {
                   minLines: 1,
                   maxLines: 4,
                   textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.send,
                   onSubmitted: (_) {
                     if (!isLoading) onSend();
                   },
