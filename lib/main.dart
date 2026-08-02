@@ -331,6 +331,11 @@ class _CareerChatPageState extends State<CareerChatPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
+                    style: IconButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFD166),
+                      foregroundColor: const Color(0xFF3A315F),
+                      hoverColor: const Color(0xFFFFE29A),
+                    ),
                     tooltip: isDark
                         ? 'Chuy\u1ec3n sang n\u1ec1n s\u00e1ng'
                         : 'Chuy\u1ec3n sang n\u1ec1n t\u1ed1i',
@@ -339,15 +344,20 @@ class _CareerChatPageState extends State<CareerChatPage> {
                       isDark
                           ? Icons.light_mode_rounded
                           : Icons.dark_mode_rounded,
-                      color: Colors.white,
                     ),
                   ),
+                  const SizedBox(width: 6),
                   IconButton(
+                    style: IconButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF6376),
+                      foregroundColor: Colors.white,
+                      hoverColor: const Color(0xFFFF8C99),
+                    ),
                     tooltip: '\u0110\u0103ng xu\u1ea5t',
                     onPressed: () async {
                       await Supabase.instance.client.auth.signOut();
                     },
-                    icon: const Icon(Icons.logout_rounded, color: Colors.white),
+                    icon: const Icon(Icons.logout_rounded),
                   ),
                 ],
               ),
